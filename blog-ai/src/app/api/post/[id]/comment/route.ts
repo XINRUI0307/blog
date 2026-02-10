@@ -1,0 +1,26 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || (session.user as { status?: string }).status !== "approved") {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+  const { id } = await params;
+  const postId = parseInt(id, 10);
+  const form = await req.formData();
+  const body = (form.get("body") as string)?.trim();
+  if (!body) {
+    return NextResponse.redirect(new URL(`/post/${postId}?error=empty`, req.url));
+  }
+  const userId = parseInt((session.user as { id?: string }).id ?? "0", 10);
+  await prisma.comment.create({
+    data: { postId, userId, body },
+  });
+  return NextResponse.redirect(new URL(`/post/${postId}`, req.url));
+}

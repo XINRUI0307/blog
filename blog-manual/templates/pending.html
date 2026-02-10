@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Pending - Travel Blog{% endblock %}
+{% block content %}
+<h1>Account pending</h1>
+<p>Your account is waiting for admin approval. You will be able to use the site once approved.</p>
+<p><a href="{{ url_for('logout') }}">Logout</a></p>
+{% endblock %}

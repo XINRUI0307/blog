@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Admin - Comments{% endblock %}
+{% block content %}
+<h1>Admin - Comments</h1>
+<nav class="admin-nav">
+    <a href="{{ url_for('admin_users') }}">Users</a>
+    <a href="{{ url_for('admin_posts') }}">Posts</a>
+    <a href="{{ url_for('admin_comments') }}">Comments</a>
+    <a href="{{ url_for('admin_sidebar') }}">Sidebar</a>
+</nav>
+<table class="admin-table">
+    <thead>
+        <tr><th>ID</th><th>Post</th><th>User</th><th>Comment</th><th>Reported</th><th>Created</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        {% for c in comments %}
+        <tr>
+            <td>{{ c.id }}</td>
+            <td><a href="{{ url_for('post_detail', post_id=c.post_id) }}">{{ c.title }}</a></td>
+            <td>{{ c.username }}</td>
+            <td>{{ c.body[:50] }}{% if c.body|length > 50 %}...{% endif %}</td>
+            <td>{% if c.reported %}Yes{% else %}No{% endif %}</td>
+            <td>{{ c.created_at[:10] }}</td>
+            <td>
+                {% if not c.removed %}
+                <form action="{{ url_for('admin_remove_comment', comment_id=c.id) }}" method="post" style="display:inline;">
+                    <button type="submit">Remove</button>
+                </form>
+                {% else %}
+                Removed
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

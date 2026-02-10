@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Admin - Users{% endblock %}
+{% block content %}
+<h1>Admin - Users</h1>
+<nav class="admin-nav">
+    <a href="{{ url_for('admin_users') }}">Users</a>
+    <a href="{{ url_for('admin_posts') }}">Posts</a>
+    <a href="{{ url_for('admin_comments') }}">Comments</a>
+    <a href="{{ url_for('admin_sidebar') }}">Sidebar</a>
+</nav>
+<table class="admin-table">
+    <thead>
+        <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.role }}</td>
+            <td>{{ u.status }}</td>
+            <td>{{ u.created_at[:10] }}</td>
+            <td>
+                {% if u.status == 'pending' %}
+                <form action="{{ url_for('admin_approve_user', user_id=u.id) }}" method="post" style="display:inline;">
+                    <button type="submit">Approve</button>
+                </form>
+                <form action="{{ url_for('admin_reject_user', user_id=u.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Reject this user?');">
+                    <button type="submit">Reject</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

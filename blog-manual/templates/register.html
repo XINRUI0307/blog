@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Register - Travel Blog{% endblock %}
+{% block content %}
+<h1>Register</h1>
+<form action="{{ url_for('register') }}" method="post" class="form">
+    <label>Username</label>
+    <input type="text" name="username" required>
+    <label>Email</label>
+    <input type="email" name="email" required>
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <label>I want to</label>
+    <select name="role">
+        <option value="reader">Read and comment only (Reader)</option>
+        <option value="contributor">Write blog posts (Contributor)</option>
+    </select>
+    <label>
+        <input type="checkbox" name="agree_terms" required>
+        I agree to the <a href="{{ url_for('terms') }}" target="_blank">Terms</a> and <a href="{{ url_for('privacy') }}" target="_blank">Privacy Policy</a>.
+    </label>
+    <button type="submit">Register</button>
+</form>
+<p><a href="{{ url_for('login') }}">Login</a></p>
+{% endblock %}

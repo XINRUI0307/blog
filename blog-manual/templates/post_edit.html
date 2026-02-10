@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{% if post %}Edit{% else %}New post{% endif %} - Travel Blog{% endblock %}
+{% block content %}
+<h1>{% if post %}Edit post{% else %}New post{% endif %}</h1>
+<form action="{% if post %}{{ url_for('post_edit', post_id=post.id) }}{% else %}{{ url_for('post_new') }}{% endif %}" method="post" enctype="multipart/form-data" class="form">
+    <label>Title</label>
+    <input type="text" name="title" value="{{ post.title if post else '' }}" required>
+    <label>Location</label>
+    <input type="text" name="location" value="{{ post.location if post else '' }}">
+    <label>Body</label>
+    <textarea name="body" rows="10" required>{{ post.body if post else '' }}</textarea>
+    <label>Images (optional, max 10MB each)</label>
+    <input type="file" name="images" multiple accept="image/*">
+    {% if post and post.images %}
+    <p>Current images:</p>
+    <ul>
+        {% for img in post.images %}
+        <li>{{ img.filename }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <button type="submit">{% if post %}Update{% else %}Create{% endif %}</button>
+</form>
+<p><a href="{{ url_for('my_posts') }}">Back to my posts</a></p>
+{% endblock %}

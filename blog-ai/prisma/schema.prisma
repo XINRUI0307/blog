@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// For PostgreSQL (e.g. Supabase): change provider to "postgresql" and set DATABASE_URL accordingly.
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  role         String    @default("reader")
+  status       String    @default("pending")
+  agreedTerms  Boolean   @default(false) @map("agreed_terms")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  posts        Post[]
+  comments     Comment[]
+  ratings      Rating[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  title     String
+  body      String
+  location  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+  images    PostImage[]
+  comments  Comment[]
+  ratings   Rating[]
+}
+
+model PostImage {
+  id        Int      @id @default(autoincrement())
+  postId    Int      @map("post_id")
+  filename  String
+  filepath  String
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  postId    Int      @map("post_id")
+  userId    Int      @map("user_id")
+  body      String
+  reported  Boolean  @default(false)
+  removed   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  postId    Int      @map("post_id")
+  userId    Int      @map("user_id")
+  stars     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+  @@unique([postId, userId])
+}
+
+model SidebarSetting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}

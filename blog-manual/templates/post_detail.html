@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} - Travel Blog{% endblock %}
+{% block content %}
+<article class="post-full">
+    <h1>{{ post.title }}</h1>
+    <p class="meta">By {{ post.username }}{% if post.location %} · {{ post.location }}{% endif %} · {{ post.created_at[:10] }}</p>
+    {% for img in post.images %}
+    <figure>
+        <img src="{{ url_for('static', filename='uploads/' + img.filepath) }}" alt="{{ img.filename }}">
+    </figure>
+    {% endfor %}
+    <div class="post-body">{{ post.body }}</div>
+    <div class="rating-area">
+        <p>Average: {{ post.avg_stars }} stars ({{ post.rating_count }} ratings)</p>
+        {% if session.get('user_id') and session.get('status') == 'approved' %}
+        <form action="{{ url_for('rate_post', post_id=post.id) }}" method="post" class="rate-form">
+            <label>Your rating:</label>
+            <select name="stars">
+                <option value="1" {% if post.user_rating == 1 %}selected{% endif %}>1</option>
+                <option value="2" {% if post.user_rating == 2 %}selected{% endif %}>2</option>
+                <option value="3" {% if post.user_rating == 3 %}selected{% endif %}>3</option>
+                <option value="4" {% if post.user_rating == 4 %}selected{% endif %}>4</option>
+                <option value="5" {% if post.user_rating == 5 %}selected{% endif %}>5</option>
+            </select>
+            <button type="submit">Rate</button>
+        </form>
+        {% endif %}
+    </div>
+    {% if session.get('user_id') and (session.get('role') == 'admin' or (session.get('role') in ('contributor', 'admin') and post.user_id == session.get('user_id'))) %}
+    <p><a href="{{ url_for('post_edit', post_id=post.id) }}">Edit</a> |
+       <form action="{{ url_for('post_delete', post_id=post.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Delete this post?');">
+           <button type="submit">Delete</button>
+       </form>
+    </p>
+    {% endif %}
+</article>
+<section class="comments">
+    <h2>Comments</h2>
+    {% for c in post.comments %}
+    <div class="comment">
+        <p><strong>{{ c.username }}</strong> · {{ c.created_at[:10] }}{% if c.reported %} <span class="reported">(reported)</span>{% endif %}</p>
+        <p>{{ c.body }}</p>
+        {% if session.get('user_id') and session.get('status') == 'approved' %}
+        <form action="{{ url_for('report_comment', comment_id=c.id) }}" method="post" style="display:inline;">
+            <button type="submit">Report</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% if session.get('user_id') and session.get('status') == 'approved' %}
+    <form action="{{ url_for('add_comment', post_id=post.id) }}" method="post" class="comment-form">
+        <textarea name="body" rows="3" required placeholder="Add a comment"></textarea>
+        <button type="submit">Submit</button>
+    </form>
+    {% else %}
+    <p><a href="{{ url_for('login') }}">Login</a> to comment.</p>
+    {% endif %}
+</section>
+{% if sidebar.get('show_search') == '1' %}
+<aside class="sidebar-inline">
+    <form action="{{ url_for('search') }}" method="get">
+        <input type="text" name="q" placeholder="Search">
+        <button type="submit">Go</button>
+    </form>
+</aside>
+{% endif %}
+{% endblock %}

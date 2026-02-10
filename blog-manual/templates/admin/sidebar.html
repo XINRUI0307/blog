@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Admin - Sidebar{% endblock %}
+{% block content %}
+<h1>Admin - Sidebar</h1>
+<nav class="admin-nav">
+    <a href="{{ url_for('admin_users') }}">Users</a>
+    <a href="{{ url_for('admin_posts') }}">Posts</a>
+    <a href="{{ url_for('admin_comments') }}">Comments</a>
+    <a href="{{ url_for('admin_sidebar') }}">Sidebar</a>
+</nav>
+<form action="{{ url_for('admin_sidebar') }}" method="post" class="form">
+    <label><input type="checkbox" name="show_recent" {% if sidebar.get('show_recent') == '1' %}checked{% endif %}> Show recent posts in sidebar</label>
+    <label><input type="checkbox" name="show_search" {% if sidebar.get('show_search') == '1' %}checked{% endif %}> Show search in sidebar</label>
+    <button type="submit">Save</button>
+</form>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Home - Travel Blog{% endblock %}
+{% block content %}
+<div class="layout">
+    <div class="content-area">
+        <h1>Recent posts</h1>
+        {% for post in posts %}
+        <article class="post-card">
+            <h2><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h2>
+            {% if post.location %}<p class="meta">Location: {{ post.location }}</p>{% endif %}
+            <p class="date">{{ post.created_at[:10] }}</p>
+            <p class="excerpt">{{ post.body[:200] }}{% if post.body|length > 200 %}...{% endif %}</p>
+            <a href="{{ url_for('post_detail', post_id=post.id) }}">Read more</a>
+        </article>
+        {% else %}
+        <p>No posts yet.</p>
+        {% endfor %}
+    </div>
+    {% if sidebar.get('show_recent') == '1' or sidebar.get('show_search') == '1' %}
+    <aside class="sidebar">
+        {% if sidebar.get('show_search') == '1' %}
+        <div class="sidebar-box">
+            <h3>Search</h3>
+            <form action="{{ url_for('search') }}" method="get">
+                <input type="text" name="q" placeholder="Keyword">
+                <input type="text" name="location" placeholder="Location">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        {% endif %}
+        {% if sidebar.get('show_recent') == '1' and posts %}
+        <div class="sidebar-box">
+            <h3>Recent</h3>
+            <ul>
+                {% for post in posts[:5] %}
+                <li><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </aside>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Terms - Travel Blog{% endblock %}
+{% block content %}
+<h1>Terms of Use</h1>
+<p>By using this travel blog you agree to the following terms.</p>
+<ul>
+    <li>You will not post offensive or illegal content.</li>
+    <li>You are responsible for your own content and comments.</li>
+    <li>Photos must not exceed 10MB or 1200×800 pixels.</li>
+    <li>Contributors may have up to 10 blog entries; older posts may be removed after 18 months.</li>
+</ul>
+<p><a href="{{ url_for('index') }}">Back to home</a></p>
+{% endblock %}
