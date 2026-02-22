@@ -81,5 +81,4 @@ Soft delete moderation:
 
 ---
 
-## Project Structure (
-
+## Project Structure (Manual Version)
